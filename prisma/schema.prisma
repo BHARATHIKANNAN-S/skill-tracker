@@ -1,0 +1,418 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String    @id @default(auto()) @map("_id") @db.ObjectId
+  email             String    @unique
+  password          String
+  role              String    @default("STUDENT")
+  emailVerified     Boolean   @default(false)
+  isActive          Boolean   @default(true)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  lastLoginAt       DateTime?
+  otp               Otp?
+  studentProfile    StudentProfile?
+  notifications     Notification[]
+  loginStreaks      LoginStreak[]
+}
+
+model Otp {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @unique @db.ObjectId
+  code      String
+  type      String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model StudentProfile {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String   @unique @db.ObjectId
+  name            String
+  photo           String?
+  department      String?
+  college         String?
+  year            Int?
+  registerNumber  String?
+  phone           String?
+  linkedin        String?
+  github          String?
+  portfolio       String?
+  preferredRole   String?
+  careerGoal      String?
+  languagesKnown  String?
+  bio             String?
+  xp              Int      @default(0)
+  coins           Int      @default(0)
+  level           Int      @default(1)
+  codingStreak    Int      @default(0)
+  lastCodingDate  DateTime?
+  lastLoginDate   DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id])
+  skills              Skill[]
+  projects            Project[]
+  certifications      Certification[]
+  dsaProblems         DsaProblem[]
+  dsaSubmissions      DsaSubmission[]
+  dsaQuestionNotes    DsaQuestionNote[]
+  dsaDiscussions      DsaDiscussion[]
+  dsaBookmarks        DsaBookmark[]
+  dsaRecentActivities DsaRecentActivity[]
+  aptitudeTests       AptitudeTest[]
+  mockInterviews      MockInterview[]
+  resumes             Resume[]
+  achievements        StudentAchievement[]
+  weeklyGoals         WeeklyGoal[]
+  aiSuggestions       AiSuggestion[]
+}
+
+model Skill {
+  id              String         @id @default(auto()) @map("_id") @db.ObjectId
+  studentId       String         @db.ObjectId
+  name            String
+  level           String         @default("Beginner")
+  experience      String?
+  confidence      Int            @default(0)
+  learningStatus  String         @default("NOT_STARTED")
+  certificate     String?
+  projectRelated  String?
+  lastUpdated     DateTime       @default(now())
+  createdAt       DateTime       @default(now())
+  student         StudentProfile @relation(fields: [studentId], references: [id])
+
+  @@unique([studentId, name])
+}
+
+model Project {
+  id              String         @id @default(auto()) @map("_id") @db.ObjectId
+  studentId       String         @db.ObjectId
+  name            String
+  description     String
+  technologies    String
+  duration        String?
+  teamSize        Int?
+  role            String?
+  githubUrl       String?
+  liveDemo        String?
+  screenshots     String?
+  documents       String?
+  status          String         @default("IN_PROGRESS")
+  difficulty      String         @default("MEDIUM")
+  qualityScore    Int            @default(0)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  student         StudentProfile @relation(fields: [studentId], references: [id])
+}
+
+model Certification {
+  id              String         @id @default(auto()) @map("_id") @db.ObjectId
+  studentId       String         @db.ObjectId
+  name            String
+  organization    String
+  issueDate       DateTime
+  expiryDate      DateTime?
+  certificateId   String?
+  verificationUrl String?
+  pdfUrl          String?
+  skillCategory   String?
+  approved        Boolean        @default(false)
+  createdAt       DateTime       @default(now())
+  student         StudentProfile @relation(fields: [studentId], references: [id])
+}
+
+model DsaProblem {
+  id                String          @id @default(auto()) @map("_id") @db.ObjectId
+  studentId         String          @db.ObjectId
+  platform          String
+  title             String
+  topic             String
+  difficulty        String
+  solvedAt          DateTime        @default(now())
+  timeTaken         Int?
+  accepted          Boolean         @default(true)
+  
+  // Custom Journal Fields
+  url               String?
+  language          String?
+  code              String?
+  notes             String?
+
+  // AI Review Analysis
+  aiScore           Int?
+  aiTimeComplexity  String?
+  aiSpaceComplexity String?
+  aiOptimal         Boolean?
+  aiCodeQuality     String?
+  aiReadability     String?
+  aiNaming          String?
+  aiMemoryUsage     String?
+  aiReadiness       String?
+  aiEdgeCases       String?
+  aiSuggestions     String?         // Stored as JSON string
+
+  // Revision System
+  revisionStep      Int             @default(0) // 0 to 5
+  nextReviewAt      DateTime?
+
+  student           StudentProfile  @relation(fields: [studentId], references: [id])
+}
+
+model AptitudeTest {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  studentId   String   @db.ObjectId
+  category    String
+  score       Float
+  totalQuestions Int
+  correctAnswers Int
+  timeTaken   Int
+  takenAt     DateTime @default(now())
+  student     StudentProfile @relation(fields: [studentId], references: [id])
+}
+
+model MockInterview {
+  id                  String   @id @default(auto()) @map("_id") @db.ObjectId
+  studentId           String   @db.ObjectId
+  type                String   @default("Technical")
+  technicalScore      Int      @default(0)
+  hrScore             Int      @default(0)
+  communicationScore  Int      @default(0)
+  confidenceScore     Int      @default(0)
+  problemSolvingScore Int      @default(0)
+  overallScore        Int      @default(0)
+  feedback            String?
+  suggestions         String?
+  conductedAt         DateTime @default(now())
+  student             StudentProfile @relation(fields: [studentId], references: [id])
+}
+
+model Resume {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  studentId       String   @db.ObjectId
+  fileName        String
+  fileUrl         String?
+  version         Int      @default(1)
+  atsScore        Int      @default(0)
+  grammarScore    Int      @default(0)
+  formattingScore Int      @default(0)
+  keywordScore    Int      @default(0)
+  missingSkills   String?
+  suggestions     String?
+  industryReady   Int      @default(0)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  student         StudentProfile @relation(fields: [studentId], references: [id])
+}
+
+model Achievement {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String   @unique
+  description String
+  icon        String
+  xpReward    Int      @default(50)
+  coinReward  Int      @default(10)
+  category    String
+  requirement String
+  createdAt   DateTime @default(now())
+  students    StudentAchievement[]
+}
+
+model StudentAchievement {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  studentId     String         @db.ObjectId
+  achievementId String         @db.ObjectId
+  earnedAt      DateTime       @default(now())
+  student       StudentProfile @relation(fields: [studentId], references: [id])
+  achievement   Achievement    @relation(fields: [achievementId], references: [id])
+
+  @@unique([studentId, achievementId])
+}
+
+model Badge {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String   @unique
+  description String
+  icon        String
+  color       String
+  createdAt   DateTime @default(now())
+}
+
+model Course {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String
+  platform    String
+  url         String?
+  skillTags   String
+  duration    String?
+  level       String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+}
+
+model PlacementDrive {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  company     String
+  role        String
+  package     String?
+  deadline    DateTime
+  requirements String?
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  title     String
+  message   String
+  type      String   @default("info")
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model WeeklyGoal {
+  id          String         @id @default(auto()) @map("_id") @db.ObjectId
+  studentId   String         @db.ObjectId
+  title       String
+  description String?
+  target      Int            @default(1)
+  progress    Int            @default(0)
+  dueDate     DateTime
+  completed   Boolean        @default(false)
+  createdAt   DateTime       @default(now())
+  student     StudentProfile @relation(fields: [studentId], references: [id])
+}
+
+model AiSuggestion {
+  id        String         @id @default(auto()) @map("_id") @db.ObjectId
+  studentId String         @db.ObjectId
+  type      String
+  title     String
+  content   String
+  priority  String         @default("medium")
+  read      Boolean        @default(false)
+  createdAt DateTime       @default(now())
+  student   StudentProfile @relation(fields: [studentId], references: [id])
+}
+
+model LoginStreak {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  date      DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, date])
+}
+
+model DsaQuestion {
+  id                 String              @id @default(auto()) @map("_id") @db.ObjectId
+  title              String
+  slug               String              @unique
+  difficulty         String              // EASY, MEDIUM, HARD
+  topic              String
+  description        String
+  constraints        String
+  examples           String              // JSON string
+  inputFormat        String?
+  outputFormat       String?
+  hints              String              // JSON string (string[])
+  tags               String              // JSON string (string[])
+  companies          String              // JSON string (string[])
+  acceptanceRate     Float               @default(50.0)
+  estimatedTime      Int                 @default(30)
+  leetcodeId         Int?
+  leetcodeUrl        String?
+  isPremium          Boolean             @default(false)
+  frequency          Float               @default(0.0)
+  javaSolution       String?
+  cppSolution        String?
+  pythonSolution     String?
+  javascriptSolution String?
+  timeComplexity     String?
+  spaceComplexity    String?
+  similarQuestions   String              // JSON string
+  videoLink          String?
+  articleLink        String?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  submissions        DsaSubmission[]
+  notes              DsaQuestionNote[]
+  discussions        DsaDiscussion[]
+  bookmarks          DsaBookmark[]
+  recentActivities   DsaRecentActivity[]
+}
+
+model DsaBookmark {
+  id         String         @id @default(auto()) @map("_id") @db.ObjectId
+  studentId  String         @db.ObjectId
+  questionId String         @db.ObjectId
+  createdAt  DateTime       @default(now())
+  student    StudentProfile @relation(fields: [studentId], references: [id])
+  question   DsaQuestion    @relation(fields: [questionId], references: [id])
+
+  @@unique([studentId, questionId])
+}
+
+model DsaRecentActivity {
+  id           String         @id @default(auto()) @map("_id") @db.ObjectId
+  studentId    String         @db.ObjectId
+  questionId   String         @db.ObjectId
+  activityType String         // 'VIEWED' or 'SOLVED'
+  lastActive   DateTime       @default(now()) @updatedAt
+  student      StudentProfile @relation(fields: [studentId], references: [id])
+  question     DsaQuestion    @relation(fields: [questionId], references: [id])
+
+  @@unique([studentId, questionId, activityType])
+}
+
+model DsaQuestionNote {
+  id         String      @id @default(auto()) @map("_id") @db.ObjectId
+  studentId  String      @db.ObjectId
+  questionId String      @db.ObjectId
+  content    String
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  student    StudentProfile @relation(fields: [studentId], references: [id])
+  question   DsaQuestion    @relation(fields: [questionId], references: [id])
+
+  @@unique([studentId, questionId])
+}
+
+model DsaDiscussion {
+  id           String         @id @default(auto()) @map("_id") @db.ObjectId
+  questionId   String         @db.ObjectId
+  studentId    String         @db.ObjectId
+  studentName  String
+  studentPhoto String?
+  content      String
+  parentId     String?        @db.ObjectId
+  createdAt    DateTime       @default(now())
+  question     DsaQuestion    @relation(fields: [questionId], references: [id])
+  student      StudentProfile @relation(fields: [studentId], references: [id])
+}
+
+model DsaSubmission {
+  id         String         @id @default(auto()) @map("_id") @db.ObjectId
+  studentId  String         @db.ObjectId
+  questionId String         @db.ObjectId
+  language   String
+  code       String
+  status     String         // SOLVED, FAILED
+  runtime    Int?
+  memory     Int?
+  createdAt  DateTime       @default(now())
+  student    StudentProfile @relation(fields: [studentId], references: [id])
+  question   DsaQuestion    @relation(fields: [questionId], references: [id])
+}
