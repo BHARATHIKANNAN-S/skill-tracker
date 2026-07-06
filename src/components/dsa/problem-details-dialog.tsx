@@ -36,6 +36,7 @@ interface Problem {
   difficulty: string;
   solvedAt: string;
   timeTaken?: number | null;
+  language?: string | null;
   url?: string | null;
   code?: string | null;
   notes?: string | null;
