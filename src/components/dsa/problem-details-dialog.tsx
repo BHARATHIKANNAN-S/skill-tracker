@@ -78,26 +78,26 @@ export default function ProblemDetailsDialog({
 
   // Form states
   const [form, setForm] = useState({
-    title: problem.title || "",
-    platform: problem.platform || "LeetCode",
-    topic: problem.topic || "Arrays",
-    difficulty: problem.difficulty || "EASY",
-    url: problem.url || "",
-    timeTaken: problem.timeTaken || 30,
-    code: problem.code || "",
-    notes: problem.notes || "",
+    title: problem?.title || "",
+    platform: problem?.platform || "LeetCode",
+    topic: problem?.topic || "Arrays",
+    difficulty: problem?.difficulty || "EASY",
+    url: problem?.url || "",
+    timeTaken: problem?.timeTaken || 30,
+    code: problem?.code || "",
+    notes: problem?.notes || "",
   });
 
   const handleCancel = () => {
     setForm({
-      title: problem.title || "",
-      platform: problem.platform || "LeetCode",
-      topic: problem.topic || "Arrays",
-      difficulty: problem.difficulty || "EASY",
-      url: problem.url || "",
-      timeTaken: problem.timeTaken || 30,
-      code: problem.code || "",
-      notes: problem.notes || "",
+      title: problem?.title || "",
+      platform: problem?.platform || "LeetCode",
+      topic: problem?.topic || "Arrays",
+      difficulty: problem?.difficulty || "EASY",
+      url: problem?.url || "",
+      timeTaken: problem?.timeTaken || 30,
+      code: problem?.code || "",
+      notes: problem?.notes || "",
     });
     setIsEditing(false);
   };
