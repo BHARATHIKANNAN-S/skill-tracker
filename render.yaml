@@ -1,21 +1,22 @@
 services:
   - type: web
     name: skill-tracker
+    plan: free # Ensures it deploys on Render's Free tier without requiring billing info
     runtime: node
     buildCommand: npm run build
     startCommand: npm run start
     envVars:
       - key: DATABASE_URL
-        sync: false # Render will prompt you to enter your MongoDB connection string securely
+        sync: false
       - key: JWT_SECRET
-        generateValue: true # Render will automatically generate a secure random key for JWT
+        generateValue: true
       - key: JWT_EXPIRES_IN
         value: 7d
       - key: NEXT_PUBLIC_APP_NAME
         value: SkillForge
       - key: NEXT_PUBLIC_APP_URL
-        value: https://skill-tracker.onrender.com # Change to your actual Render URL after deployment
+        value: https://skill-tracker.onrender.com
       - key: GROQ_API_KEY
-        sync: false # Render will prompt you to enter your Groq API key securely
+        sync: false
       - key: AI_MODEL
         value: llama-3.3-70b-versatile
