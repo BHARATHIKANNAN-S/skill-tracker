@@ -35,13 +35,18 @@ export async function POST(
     }
 
     // Find the question
+    const isObjectId = /^[0-9a-fA-F]{24}$/.test(identifier);
     const question = await prisma.dsaQuestion.findFirst({
-      where: {
-        OR: [
-          { slug: identifier },
-          { id: identifier }
-        ]
-      }
+      where: isObjectId
+        ? {
+            OR: [
+              { slug: identifier },
+              { id: identifier }
+            ]
+          }
+        : {
+            slug: identifier
+          }
     });
 
     if (!question) {

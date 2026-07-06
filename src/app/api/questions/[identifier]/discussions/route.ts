@@ -17,13 +17,18 @@ export async function GET(
   const identifier = resolvedParams.identifier;
 
   try {
+    const isObjectId = /^[0-9a-fA-F]{24}$/.test(identifier);
     const question = await prisma.dsaQuestion.findFirst({
-      where: {
-        OR: [
-          { slug: identifier },
-          { id: identifier }
-        ]
-      },
+      where: isObjectId
+        ? {
+            OR: [
+              { slug: identifier },
+              { id: identifier }
+            ]
+          }
+        : {
+            slug: identifier
+          },
       select: { id: true }
     });
 
@@ -68,13 +73,18 @@ export async function POST(
       return NextResponse.json({ error: "Discussion content cannot be empty" }, { status: 400 });
     }
 
+    const isObjectId = /^[0-9a-fA-F]{24}$/.test(identifier);
     const question = await prisma.dsaQuestion.findFirst({
-      where: {
-        OR: [
-          { slug: identifier },
-          { id: identifier }
-        ]
-      },
+      where: isObjectId
+        ? {
+            OR: [
+              { slug: identifier },
+              { id: identifier }
+            ]
+          }
+        : {
+            slug: identifier
+          },
       select: { id: true }
     });
 

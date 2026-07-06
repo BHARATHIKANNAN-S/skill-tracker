@@ -6,7 +6,7 @@ const publicPaths = ["/", "/login", "/register", "/forgot-password", "/verify-ot
 const adminPaths = ["/admin"];
 const studentPaths = ["/dashboard", "/profile", "/skills", "/projects", "/certifications", "/dsa", "/aptitude", "/interviews", "/resume", "/ai-mentor", "/weekly-goals", "/leaderboard", "/achievements", "/settings", "/notifications"];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get("auth-token")?.value;
   const session = token ? await verifyTokenEdge(token) : null;

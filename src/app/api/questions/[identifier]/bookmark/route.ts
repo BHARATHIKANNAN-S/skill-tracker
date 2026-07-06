@@ -29,13 +29,18 @@ export async function POST(
 
   try {
     // Find the question by slug or ID
+    const isObjectId = /^[0-9a-fA-F]{24}$/.test(identifier);
     const question = await prisma.dsaQuestion.findFirst({
-      where: {
-        OR: [
-          { slug: identifier },
-          { id: identifier }
-        ]
-      },
+      where: isObjectId
+        ? {
+            OR: [
+              { slug: identifier },
+              { id: identifier }
+            ]
+          }
+        : {
+            slug: identifier
+          },
       select: { id: true }
     });
 
@@ -93,13 +98,18 @@ export async function GET(
   }
 
   try {
+    const isObjectId = /^[0-9a-fA-F]{24}$/.test(identifier);
     const question = await prisma.dsaQuestion.findFirst({
-      where: {
-        OR: [
-          { slug: identifier },
-          { id: identifier }
-        ]
-      },
+      where: isObjectId
+        ? {
+            OR: [
+              { slug: identifier },
+              { id: identifier }
+            ]
+          }
+        : {
+            slug: identifier
+          },
       select: { id: true }
     });
 

@@ -22,13 +22,18 @@ export async function GET(
 
   try {
     // Find by slug first, then by ID
+    const isObjectId = /^[0-9a-fA-F]{24}$/.test(identifier);
     let question = await prisma.dsaQuestion.findFirst({
-      where: {
-        OR: [
-          { slug: identifier },
-          { id: identifier }
-        ]
-      }
+      where: isObjectId
+        ? {
+            OR: [
+              { slug: identifier },
+              { id: identifier }
+            ]
+          }
+        : {
+            slug: identifier
+          }
     });
 
     if (!question) {
@@ -116,6 +121,11 @@ export async function PUT(
   try {
     const body = await request.json();
     
+    const isObjectId = /^[0-9a-fA-F]{24}$/.test(id);
+    if (!isObjectId) {
+      return NextResponse.json({ error: "Question not found" }, { status: 404 });
+    }
+    
     // Check if question exists
     const existing = await prisma.dsaQuestion.findUnique({ where: { id } });
     if (!existing) {
@@ -173,6 +183,11 @@ export async function DELETE(
   }
 
   try {
+    const isObjectId = /^[0-9a-fA-F]{24}$/.test(id);
+    if (!isObjectId) {
+      return NextResponse.json({ error: "Question not found" }, { status: 404 });
+    }
+
     const existing = await prisma.dsaQuestion.findUnique({ where: { id } });
     if (!existing) {
       return NextResponse.json({ error: "Question not found" }, { status: 404 });

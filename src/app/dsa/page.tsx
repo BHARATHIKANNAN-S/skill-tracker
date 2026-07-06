@@ -80,7 +80,7 @@ export default function DsaDashboardPage() {
   const router = useRouter();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"categories" | "bookmarks" | "recent">("categories");
+  const [activeTab, setActiveTab] = useState<"categories" | "leetcode50" | "bookmarks" | "recent">("categories");
 
   // Search & Filter state
   const [searchQuery, setSearchQuery] = useState("");
@@ -163,6 +163,11 @@ export default function DsaDashboardPage() {
   const overallProgress = totalQuestionsCount > 0 
     ? Math.round((solvedCount / (easyTarget + mediumTarget + hardTarget)) * 100) 
     : 0;
+
+  const leetCode50Questions = [...questions]
+    .sort((a, b) => (b.frequency || 0) - (a.frequency || 0))
+    .slice(0, 50);
+  const leetCode50SolvedCount = leetCode50Questions.filter(q => q.status === "SOLVED").length;
 
   // Filtered questions based on search & filters
   const filteredQuestions = questions.filter(q => {
@@ -285,7 +290,7 @@ export default function DsaDashboardPage() {
         </div>
 
         {/* Sticky Filters & Search Area */}
-        <div className="sticky top-[4.1rem] z-20 bg-slate-50/90 dark:bg-slate-950/90 backdrop-blur-md border border-slate-200 dark:border-slate-850 p-4 rounded-2xl shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
           <div className="relative w-full md:max-w-md">
             <Search className="absolute left-3 top-2.5 h-4.5 w-4.5 text-slate-400" />
             <Input 
@@ -324,6 +329,7 @@ export default function DsaDashboardPage() {
           <div className="flex border-b border-slate-200 dark:border-slate-800 pb-px mb-2 overflow-x-auto gap-2">
             {[
               { id: "categories", label: "Topic Categories", icon: BookOpen },
+              { id: "leetcode50", label: "LeetCode Top 50", icon: Award },
               { id: "bookmarks", label: "Bookmarked Problems", icon: Bookmark },
               { id: "recent", label: "Recently Active", icon: History }
             ].map((tab) => {
@@ -463,6 +469,49 @@ export default function DsaDashboardPage() {
                       </motion.div>
                     );
                   })}
+                </div>
+              )}
+
+              {activeTab === "leetcode50" && (
+                <div className="space-y-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 bg-gradient-to-r from-indigo-50 to-purple-50/50 border border-indigo-100/80 rounded-2xl">
+                    <div className="space-y-1">
+                      <h3 className="text-sm font-bold text-indigo-950 flex items-center gap-1.5">
+                        <Award className="h-4.5 w-4.5 text-indigo-600 animate-pulse" />
+                        LeetCode Top 50 Interview Challenge
+                      </h3>
+                      <p className="text-[11px] text-slate-500">
+                        The 50 most frequently asked placement questions sorted by frequency. Master these to crack coding interviews!
+                      </p>
+                    </div>
+                    <div className="shrink-0 flex items-center gap-3">
+                      <span className="text-xs font-bold text-slate-600 bg-white border border-slate-100 rounded-lg px-2.5 py-1">
+                        {leetCode50SolvedCount} / 50 Solved
+                      </span>
+                      <Badge className="bg-indigo-650 hover:bg-indigo-700 text-white font-bold">
+                        {Math.round((leetCode50SolvedCount / 50) * 100)}% Complete
+                      </Badge>
+                    </div>
+                  </div>
+
+                  <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden mb-6">
+                    <div 
+                      className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-indigo-650 transition-all duration-500 shadow-sm" 
+                      style={{ width: `${(leetCode50SolvedCount / 50) * 100}%` }} 
+                    />
+                  </div>
+
+                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    {leetCode50Questions.map((q) => (
+                      <QuestionCard 
+                        key={q.id} 
+                        question={q} 
+                        onBookmark={(e) => toggleBookmark(e, q)}
+                        onToggleSolved={(e) => toggleSolved(e, q)}
+                        onClick={() => router.push(`/dsa/question/${q.slug}`)} 
+                      />
+                    ))}
+                  </div>
                 </div>
               )}
 

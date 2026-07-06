@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
+import { syncQuestionsInDatabase } from "@/lib/questions-data";
 
 async function getStudentId(userId: string) {
   const p = await prisma.studentProfile.findUnique({
@@ -11,6 +12,7 @@ async function getStudentId(userId: string) {
 }
 
 export async function GET(request: NextRequest) {
+  await syncQuestionsInDatabase();
   const session = await getSession();
   const studentId = session ? await getStudentId(session.userId) : null;
 
