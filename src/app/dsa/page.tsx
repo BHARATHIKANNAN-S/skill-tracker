@@ -374,13 +374,12 @@ export default function DsaDashboardPage() {
                   Search Results ({filteredQuestions.length})
                 </h3>
                 {(searchQuery || difficultyFilter !== "ALL") && (
-                  <Button 
-                    variant="link" 
+                  <button 
                     onClick={() => { setSearchQuery(""); setDifficultyFilter("ALL"); }}
-                    className="text-xs text-indigo-600 dark:text-indigo-400 p-0"
+                    className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer p-0 bg-transparent border-0"
                   >
                     Clear filters
-                  </Button>
+                  </button>
                 )}
               </div>
 
