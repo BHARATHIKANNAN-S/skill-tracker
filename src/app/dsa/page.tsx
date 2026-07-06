@@ -303,7 +303,7 @@ export default function DsaDashboardPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2 w-full md:w-auto shrink-0 justify-end">
-            <Badge variant="outline" className="text-xs font-semibold py-1.5 px-3 border-slate-200 dark:border-slate-850 bg-white dark:bg-slate-900 text-slate-500 flex items-center gap-1.5 rounded-xl">
+            <Badge variant="default" className="text-xs font-semibold py-1.5 px-3 border-slate-200 dark:border-slate-850 bg-white dark:bg-slate-900 text-slate-500 flex items-center gap-1.5 rounded-xl">
               <ListFilter className="h-3.5 w-3.5" /> Difficulty
             </Badge>
             {(["ALL", "EASY", "MEDIUM", "HARD"] as const).map((diff) => (
