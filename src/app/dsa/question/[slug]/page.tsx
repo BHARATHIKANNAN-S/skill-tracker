@@ -8,6 +8,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import CodeEditor from "@/components/dsa/code-editor";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft,
   Sparkles,
